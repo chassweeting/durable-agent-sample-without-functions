@@ -37,10 +37,11 @@ Minimal examples focused on specific patterns and capabilities.
 
 Complete applications showcasing end-to-end scenarios with UI and backend.
 
-| Sample | Hosting | Description |
-|--------|---------|-------------|
-| [Agentic Travel Planner](samples/python/azure-functions/agentic-travel-planner) | Azure Functions | Multi-agent travel planning app with React frontend, human-in-the-loop approval, and blob storage |
-| [Agentic Travel Planner](samples/python/azure-container-apps/agentic-travel-planner) | Azure Container Apps | Same travel planner deployed to Container Apps for containerized workloads |
+| Sample | Language | Hosting | Description |
+|--------|----------|---------|-------------|
+| [Agentic Travel Planner](samples/python/azure-functions/agentic-travel-planner) | Python | Azure Functions | Multi-agent travel planning app with React frontend, human-in-the-loop approval, and blob storage |
+| [Agentic Travel Planner](samples/python/azure-container-apps/agentic-travel-planner) | Python | Azure Container Apps | Same travel planner deployed to Container Apps for containerized workloads |
+| [Agentic Travel Planner with Reliable Streaming](samples/dotnet/azure-functions/agentic-travel-planner-with-reliable-streaming) | .NET 9 | Azure Functions | Multi-agent travel planner with Redis-backed reliable streaming and React frontend |
 
 ## 🏗️ Architecture
 

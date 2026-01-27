@@ -15,7 +15,7 @@
 ### =====================================================
 
 ### Variables
-@localBaseUrl = https://func-api-gcunoylky6a2k.azurewebsites.net/ 
+@localBaseUrl = http://localhost:7071
 @agentName = TravelPlanner
 
 ### Health Check (Local)
