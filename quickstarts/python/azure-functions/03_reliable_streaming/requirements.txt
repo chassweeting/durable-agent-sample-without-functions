@@ -1,4 +1,0 @@
-agent-framework-azurefunctions
-agent-framework-durabletask>=0.0.2b260126
-azure-identity
-redis
