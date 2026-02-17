@@ -55,7 +55,7 @@ deploy: ## Deploy app to Azure Container Apps
 # ── Application ────────────────────────────────────────
 
 api: ## Start the backend API (FastAPI + Durable Task worker)
-	cd src/api && poetry run uvicorn app:app --reload --port 8000
+	cd src/api && poetry run python -m uvicorn app:app --reload --port 8000
 
 frontend: ## Start the React frontend dev server
 	cd src/frontend && npm start
