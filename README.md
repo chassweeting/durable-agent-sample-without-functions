@@ -70,27 +70,69 @@ make clean          Stop and remove the DTS emulator
 
 ## Testing via API
 
+The orchestration runs through 3 AI agents then pauses for human approval before booking. Here's the full end-to-end flow:
+
+### 1. Start a travel plan
+
 ```bash
-# Start a travel plan
-curl -X POST http://localhost:8000/travel-planner \
+curl -s -X POST http://localhost:8000/travel-planner \
   -H "Content-Type: application/json" \
   -d '{
     "userName": "Carlos",
-    "preferences": "Windsurfing holiday, guaranteed wind, warm water, healthy food, not crowded",
-    "durationInDays": 15,
-    "budget": "$8000",
-    "travelDates": "July, 2026",
-    "specialRequirements": "Ion club windsurf rental"
+    "preferences": "Beach and culture, local food",
+    "durationInDays": 5,
+    "budget": "$3000",
+    "travelDates": "March 2026",
+    "specialRequirements": "None"
   }'
-
-# Check status (use the id from the response above)
-curl http://localhost:8000/travel-planner/status/{id}
-
-# Approve the plan
-curl -X POST http://localhost:8000/travel-planner/approve/{id}
 ```
 
-Or use the Swagger UI at http://localhost:8000/docs, or the [test.http](src/api/test.http) file with the VS Code REST Client extension.
+Response (save the `id`):
+```json
+{
+  "id": "abc123...",
+  "status": "scheduled",
+  "message": "Travel planning workflow has been started..."
+}
+```
+
+### 2. Poll for status
+
+The orchestration progresses through these steps: `GettingDestinations` → `CreatingItinerary` → `GettingLocalRecommendations` → `WaitingForApproval`. Poll until it reaches `WaitingForApproval`:
+
+```bash
+curl -s http://localhost:8000/travel-planner/status/{id} | python3 -m json.tool
+```
+
+This typically takes 30–60 seconds. The `step` field shows current progress. Once it reaches `WaitingForApproval`, the response includes a full `travelPlan` object with the destination, daily itinerary, attractions, restaurants, and insider tips.
+
+### 3. Approve (or reject) the plan
+
+Once the status shows `WaitingForApproval`, the orchestration is paused waiting for a human decision:
+
+```bash
+# Approve — triggers booking
+curl -s -X POST http://localhost:8000/travel-planner/approve/{id}
+
+# Or reject
+curl -s -X POST http://localhost:8000/travel-planner/reject/{id}
+```
+
+### 4. Check final result
+
+After approval, poll status one more time. The step will be `Completed` with a booking confirmation:
+
+```bash
+curl -s http://localhost:8000/travel-planner/status/{id} | python3 -m json.tool
+```
+
+The `finalPlan` field contains the full result including `BookingConfirmation` with a confirmation ID (e.g. `TRV-469055`).
+
+If rejected, the step will be `Rejected` and no booking is created. If no approval arrives within 24 hours, the orchestration times out automatically.
+
+### Using the REST Client
+
+You can also use the [test.http](src/api/test.http) file with the VS Code REST Client extension, or the Swagger UI at http://localhost:8000/docs.
 
 ## Project Structure
 
