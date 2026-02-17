@@ -137,3 +137,24 @@ azd up           # provisions infra + deploys app
 - [Agent Framework Python Migration Guide](https://learn.microsoft.com/en-us/agent-framework/support/upgrade/python-2026-significant-changes)
 - [Durable Task Scheduler](https://learn.microsoft.com/en-us/azure/azure-functions/durable/durable-task-scheduler/)
 - [Azure Container Apps](https://learn.microsoft.com/en-us/azure/container-apps/)
+
+
+## Summary of fixes to the original repo 
+
+3 types of fix:
+
+1. `@tool` decorator now required — `currency_converter.py`
+
+Added from agent_framework import tool
+Added @tool decorator to get_exchange_rate() and convert_currency()
+The newer SDK (1.0.0b260212) requires explicit tool registration via the decorator; the old version (0.0.2b260126) did not.
+
+2. `get_new_thread()` → `create_session()` — `worker.py`
+
+6 occurrences: destination_agent.get_new_thread() → .create_session(), same for itinerary_agent and local_agent
+Corresponding thread= keyword argument renamed to session= in agent.run() calls
+
+3. `try_parse_value()` → `.value` property — `worker.py`
+
+The old result.try_parse_value(model_class) method was removed from the SDK
+Replaced with accessing result.value and using isinstance() to type-check, with fallback to raw text JSON parsing
